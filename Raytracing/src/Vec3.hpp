@@ -1,8 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <fmt/core.h>
-#include <fmt/format.h>
 
 //Redo whole class to not call functions for every operator, but index into the vector
 class Vec3
@@ -57,17 +55,6 @@ public:
 
 //Just a alias
 using point3 = Vec3;
-
-template<>
-struct fmt::formatter<Vec3>
-{
-	template <typename FormatContext>
-	auto format(const Vec3& v, FormatContext& ctx)
-	{
-		return fmt::format_to(ctx.out(), "({},{},{})", v.x, v.y, v.z);
-	}
-
-};
 
 inline Vec3 operator+(const Vec3& v, const Vec3& u)
 {

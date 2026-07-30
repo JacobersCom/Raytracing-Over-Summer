@@ -1,9 +1,15 @@
 #include <SDL3/SDL.h>
+
+#include <imgui.h>
+#include <imgui_impl_sdl3.h>
+#include <imgui_impl_sdlrenderer3.h>
+
 #include <Util.hpp>
 
 #include <Hittable.hpp>
 #include <Hittable_list.hpp>
 #include <Sphere.hpp>
+
 
 color lerp(color starting_value, double a, color ending_value)
 {
@@ -48,12 +54,6 @@ int main() {
     Hittable_List world;
     world.add(std::make_shared<Sphere>(point3(0, -100.5, -1), 100));
     world.add(std::make_shared<Sphere>(point3(0, 0, -1), 0.5));
-    world.add(std::make_shared<Sphere>(point3(1, 0, -1), 0.25));
-    world.add(std::make_shared<Sphere>(point3(-1, 0, -1), 0.25));
-
-
-
-
     //Camera
 
     //The length from the camera to the viewport
@@ -80,13 +80,25 @@ int main() {
     
     auto upper_left_pixel_loc = upper_left_viewport_pos + 0.5 * pixel_detla;
 
+
+
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         std::cerr << "SDL_Init failed: " << SDL_GetError() << "\n";
         return 1;
     }
 
-    SDL_Window* window = SDL_CreateWindow("Raytracer", image_w, image_h, 0);
+    SDL_Window* window = SDL_CreateWindow("Raytracer", 1500, 800, SDL_WINDOW_RESIZABLE);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
+
+	//Set up ImGui context
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
+    ImGui_ImplSDLRenderer3_Init(renderer);
 
     SDL_Texture* texture = SDL_CreateTexture(
         renderer,
@@ -95,44 +107,96 @@ int main() {
         image_w, image_h
     );
 
+    //pointer to the pixel info of the image
+    void* pixels;
+
+    //pitch is the size of the image in bytes
+    int pitch;
+
+	bool render_requested = false;
     bool quit = false;
     SDL_Event e;
+	double sphere_x_position = 0.0;
+	double sphere_radius = 0.5;
 
+
+	ImGui_ImplSDL3_SetMouseCaptureMode(ImGui_ImplSDL3_MouseCaptureMode_Enabled);
     while (!quit) {
+
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_EVENT_QUIT) quit = true;
+		    ImGui_ImplSDL3_ProcessEvent(&e);
+            
+            if (e.type == SDL_EVENT_QUIT)
+                quit = true;
+
+           
         }
 
-        //pointer to the pixel info of the image
-        void* pixels;
+        // Start the Dear ImGui frame
+        ImGui_ImplSDLRenderer3_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
+        ImGui::NewFrame();
 
-        //pitch is the size of the image in bytes
-        int pitch;
+        ImGui::Begin("Settings");
+        if (ImGui::Button("Render"))
+        {
+            render_requested = true;
+        }
+        if (ImGui::Button("Clear Viewport"))
+        {
+			SDL_RenderClear(renderer);
+            render_requested = false;
+        }
+        ImGui::InputDouble("Sphere x position", &sphere_x_position);
+        ImGui::InputDouble("Sphere radius", &sphere_radius);
 
-        //lock the screen for rendering
-        SDL_LockTexture(texture, NULL, &pixels, &pitch);
+        if (ImGui::Button("Add Sphere"))
+		{
+			world.add(std::make_shared<Sphere>(point3(sphere_x_position, 0, -1), sphere_radius));
+		}
+        ImGui::End();
 
-        for (int y = 0; y < image_h; y++) {
-            Uint32* row = (Uint32*)((Uint8*)pixels + y * pitch);
-            for (int x = 0; x < image_w; x++) {
+		ImGui::Begin("Scene");
+		ImGui::Image((void*)texture, ImVec2(image_w, image_h));
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        ImGui::End();
+
+        
+        if (render_requested)
+        {
+
+            //pointer to the pixel info of the image
+            void* pixels;
+
+            //pitch is the size of the image in bytes
+            int pitch;
+
+            //lock the screen for rendering
+            SDL_LockTexture(texture, NULL, &pixels, &pitch);
+
+            for (int y = 0; y < image_h; y++) {
+                Uint32* row = (Uint32*)((Uint8*)pixels + y * pitch);
+                for (int x = 0; x < image_w; x++) {
                 
-                //The screen gets rendered from top left to bottom right using this
-                auto pixel_center = upper_left_pixel_loc + (x * pixel_delta_x) + (y * pixel_delta_y);
+                    //The screen gets rendered from top left to bottom right using this
+                    auto pixel_center = upper_left_pixel_loc + (x * pixel_delta_x) + (y * pixel_delta_y);
 
-                auto ray_dir = pixel_center - camera_center;
+                    auto ray_dir = pixel_center - camera_center;
                 
-                Ray ray(camera_center, ray_dir);
+                    Ray ray(camera_center, ray_dir);
                 
-                auto pixel_color = RaySceneColor(ray, world);
+                    auto pixel_color = RaySceneColor(ray, world);
 
-                row[x] = WriteColor(pixel_color);
+                    row[x] = WriteColor(pixel_color);
+                }
             }
         }
 
         SDL_UnlockTexture(texture);
-
+        ImGui::Render();
+        SDL_SetRenderScale(renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
         SDL_RenderClear(renderer);
-        SDL_RenderTexture(renderer, texture, NULL, NULL);
+        ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
         SDL_RenderPresent(renderer);
     }
 

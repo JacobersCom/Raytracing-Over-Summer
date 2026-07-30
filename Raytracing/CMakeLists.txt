@@ -2,7 +2,7 @@
 # project specific logic here.
 #
 find_package(SDL3 CONFIG REQUIRED)
-find_package(fmt CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 
 add_executable (Raytracing src/main.cpp)
 # Add source to this project's executable.
@@ -25,6 +25,9 @@ endif()
 
 
 
-target_link_libraries(Raytracing PRIVATE SDL3::SDL3-shared fmt::fmt)
+target_link_libraries(Raytracing PRIVATE 
+SDL3::SDL3-shared 
+imgui::imgui
+)
 
 # TODO: Add tests and install targets if needed.
