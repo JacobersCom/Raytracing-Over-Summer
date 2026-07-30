@@ -8,10 +8,10 @@ This was also my first time using vkpkg with cmake.
 ![Sky background](./progress_photos/sky_background.png)
 
 #### Sphere render
-![Sphere render](./progress_photos/sphere_render)
+![Sphere render](./progress_photos/sphere_render.png)
 
 #### Sphere with normals color map
-![Sphere with normals color map](./progress_photos/sphere_with_surface_normals)
+![Sphere with normals color map](./progress_photos/sphere_with_surface_normals.png)
 
 #### Sphere with ground render
-![Sphere with ground render](./progress_photos/ground_and_sphere)
+![Sphere with ground render](./progress_photos/ground_and_sphere.png)
