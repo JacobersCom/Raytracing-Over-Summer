@@ -10,7 +10,6 @@
 #include <Hittable_list.hpp>
 #include <Sphere.hpp>
 
-
 color lerp(color starting_value, double a, color ending_value)
 {
     return (1.0 - a) * starting_value + a * ending_value;
@@ -118,7 +117,6 @@ int main() {
     SDL_Event e;
 	double sphere_x_position = 0.0;
 	double sphere_radius = 0.5;
-
 
 	ImGui_ImplSDL3_SetMouseCaptureMode(ImGui_ImplSDL3_MouseCaptureMode_Enabled);
     while (!quit) {
