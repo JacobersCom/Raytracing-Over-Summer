@@ -1,0 +1,9 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-4.1/Modules/FeatureSummary.cmake
+D:/Raytracing/Raytracing/CMakeLists.txt
+D:/Raytracing/vcpkg_installed/x64-windows/share/sdl3/SDL3Config.cmake
+D:/Raytracing/vcpkg_installed/x64-windows/share/sdl3/SDL3ConfigVersion.cmake
+D:/Raytracing/vcpkg_installed/x64-windows/share/sdl3/SDL3headersTargets.cmake
+D:/Raytracing/vcpkg_installed/x64-windows/share/sdl3/SDL3sharedTargets-debug.cmake
+D:/Raytracing/vcpkg_installed/x64-windows/share/sdl3/SDL3sharedTargets-release.cmake
+D:/Raytracing/vcpkg_installed/x64-windows/share/sdl3/SDL3sharedTargets.cmake
