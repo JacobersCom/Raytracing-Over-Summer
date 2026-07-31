@@ -10,30 +10,6 @@
 #include <Hittable_list.hpp>
 #include <Sphere.hpp>
 
-color lerp(color starting_value, double a, color ending_value)
-{
-    return (1.0 - a) * starting_value + a * ending_value;
-}
-
-color RaySceneColor(const Ray& r, const Hittable& world)
-{
-    //objects
-    hit_record rec;
-    if (world.hit(r, Interval(0, infinity), rec))
-    {
-
-        //Returns a normalized shader between 0-1 when it was original -1 -1
-        return 0.5 * (rec.normal + color(1, 1, 1));
-    }
-
-
-    //background
-    Vec3 unit_dir = unit_vector(r.GetDirection());
-    //ratio value
-    auto a = 0.5 * (unit_dir.y() + 1.0);
-    return lerp(color(1.0, 1.0, 1.0), a, color(0.5, 0.7, 1.0));
-}
-
 int main() {
 
     //View port aspect ratio
