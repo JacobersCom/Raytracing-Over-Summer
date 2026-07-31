@@ -1,8 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"D:/Raytracing/build/cmake_install.cmake",
-		"D:/Raytracing/build/Raytracing/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
