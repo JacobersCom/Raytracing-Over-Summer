@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Ray.hpp>
+#include <Util.hpp>
 
 struct hit_record
 {
@@ -26,5 +26,5 @@ public:
 	virtual ~Hittable() = default;
 
 	//Just declaring a hit interface
-	virtual bool hit(const Ray& r, double t_min, double t_max, hit_record& rec) const = 0;
+	virtual bool hit(const Ray& r, Interval ray_t, hit_record& rec) const = 0;
 };

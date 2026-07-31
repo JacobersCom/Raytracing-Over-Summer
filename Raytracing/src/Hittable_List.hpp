@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Hittable.hpp>
+#include <Util.hpp>
 
-#include <memory>
 #include <vector>
 
 class Hittable_List : public Hittable 
@@ -20,16 +20,16 @@ public:
 		objects.push_back(_object);
 	}
 
-	bool hit(const Ray& r, double t_min, double t_max, hit_record& rec) const override
+	bool hit(const Ray& r, Interval ray_t, hit_record& rec) const override
 	{
 		hit_record temp_rec;
 		bool hit_anything = false;
-		auto closest_so_far = t_max;
+		auto closest_so_far = ray_t.max;
 
 		for (const auto& object : objects)
 		{
 			//If we hit this object
-			if (object->hit(r, t_min, t_max, temp_rec))
+			if (object->hit(r, Interval(ray_t.min, closest_so_far), temp_rec))
 			{
 				hit_anything = true;
 				closest_so_far = temp_rec.t;

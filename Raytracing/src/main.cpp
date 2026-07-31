@@ -19,7 +19,7 @@ color RaySceneColor(const Ray& r, const Hittable& world)
 {
     //objects
     hit_record rec;
-    if (world.hit(r, 0, infinity, rec))
+    if (world.hit(r, Interval(0, infinity), rec))
     {
 
         //Returns a normalized shader between 0-1 when it was original -1 -1

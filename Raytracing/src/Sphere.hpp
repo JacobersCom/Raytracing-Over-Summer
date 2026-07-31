@@ -1,7 +1,7 @@
 #pragma once
 
 #include <hittable.hpp>
-#include <vec3.hpp>
+#include <Util.hpp>
 
 class Sphere : public Hittable
 {
@@ -11,7 +11,7 @@ public:
 	Sphere(const point3& _center, double _radius) : center(_center), radius(std::fmax(0,_radius)) {};
 
 	//Did we hit an object with a ray
-	bool hit(const Ray& r, double t_min, double t_max, hit_record& rec) const override
+	bool hit(const Ray& r, Interval ray_t, hit_record& rec) const override
 	{
 		Vec3 origin_to_sphere_center = center - r.GetOrigin();
 		//Get the length of the direction because in the quadriate equation a is the dot producted of the ray's direction sqrted.
@@ -29,10 +29,10 @@ public:
 
 		//This is just the quadratic formula
 		auto root = ((h - discriminant_sqrt) / a);
-		if (root <= t_min || t_max <= root)
+		if (!ray_t.Surround(root))
 		{
 			root = (h + discriminant_sqrt) / a;
-			if (root <= t_min || t_max <= root)
+			if (!ray_t.Surround(root))
 				return false;
 		}
 
