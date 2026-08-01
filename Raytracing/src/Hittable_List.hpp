@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Hittable.hpp>
-#include <Util.hpp>
 
 #include <vector>
 

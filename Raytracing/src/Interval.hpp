@@ -29,5 +29,3 @@ public:
 	static const Interval empty, universe;
 };
 
-const Interval Interval::empty = Interval(+infinity, -infinity);
-const Interval Interval::universe = Interval(-infinity, +infinity);
