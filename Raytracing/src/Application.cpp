@@ -28,7 +28,7 @@ void Application::Initalization()
 
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     ImGui::StyleColorsDark();
 
     // Setup Platform/Renderer backends
@@ -66,6 +66,8 @@ void Application::Update(Hittable_List& world)
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
+
+
         ImGui::Begin("Settings");
         if (ImGui::Button("Render"))
         {
@@ -76,33 +78,65 @@ void Application::Update(Hittable_List& world)
             SDL_RenderClear(render);
             render_requested = false;
         }
-        ImGui::InputDouble("Sphere x position", &sphere_x_position);
-        ImGui::InputDouble("Sphere radius", &sphere_radius);
+
+		ImGui::Text("Sphere X Position");
+        ImGui::InputDouble(" ", &sphere_x_position);
+        ImGui::Text("Sphere Radius");
+        ImGui::InputDouble("##xx", &sphere_radius);
 
         if (ImGui::Button("Add Sphere"))
         {
             world.add(std::make_shared<Sphere>(point3(sphere_x_position, 0, -1), sphere_radius));
         }
+        if (ImGui::Button("Remove Sphere"))
+        {
+            if (!world.objects.empty())
+            {
+                world.objects.pop_back();
+            }
+        } 
+
+        static int selected_entity = -1;
+        ImGui::Separator();
+		ImGui::Text("Entities:");
+        ImGui::BeginChild("Entity-List", ImVec2(0, 160), true);
+        for (int i = 0; i < (int)world.objects.size(); ++i)
+        {
+            char label[64];
+            std::snprintf(label, sizeof(label), "Entity %d", i);
+            if (ImGui::Selectable(label, selected_entity == i))
+                selected_entity = i;
+        }
+        if (selected_entity >= 0 && selected_entity < (int)world.objects.size())
+        {
+            if (ImGui::Button("Remove Selected"))
+            {
+                world.objects.erase(world.objects.begin() + selected_entity);
+                selected_entity = -1;
+            }
+        }
+        ImGui::EndChild();
         ImGui::End();
 
         ImGui::Begin("Scene");
         ImGui::Image((void*)render_image, ImVec2(image_w, image_h));
+        ImGui::Separator();
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        ImGui::DockSpaceOverViewport();
         ImGui::End();
+
 
 
         if (render_requested)
         {
-
-           
             //lock the screen for rendering
             SDL_LockTexture(render_image, NULL, &pixels, &pitch);
 
             for (int y = 0; y < image_h; y++) {
                 Uint32* row = (Uint32*)((Uint8*)pixels + y * pitch);
                 for (int x = 0; x < image_w; x++) {
-                    
-                        color pixel_color(0, 0, 0);
+
+                    color pixel_color(0, 0, 0);
                     //The screen gets rendered from top left to bottom right using this
                     for (int sample = 0; sample < sample_per_pixel; sample++)
                     {
@@ -114,6 +148,7 @@ void Application::Update(Hittable_List& world)
                     row[x] = WriteColor(pixel_color_scale * pixel_color);
                 }
             }
+            render_requested = false;
         }
 
         SDL_UnlockTexture(render_image);
@@ -122,6 +157,8 @@ void Application::Update(Hittable_List& world)
         SDL_RenderClear(render);
         ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), render);
         SDL_RenderPresent(render);
+
+        
     }
 
     CleanUp();
