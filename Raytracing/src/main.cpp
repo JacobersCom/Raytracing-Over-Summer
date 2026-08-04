@@ -16,6 +16,8 @@ int main() {
 
     app.aspect_ratio = 16.0 / 9.0;
     app.image_w = 1080;
+    app.sample_per_pixel = 10;
+    
 
     app.Initalization();
 

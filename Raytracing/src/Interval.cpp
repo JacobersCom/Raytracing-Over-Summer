@@ -1,5 +1,6 @@
-#include <Interval.hpp>
+#include "Interval.hpp"
+#include <limits>
 
-const Interval Interval::empty = Interval(+infinity, -infinity);
-const Interval Interval::universe = Interval(-infinity, +infinity);
+const Interval Interval::empty = Interval(+std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity());
+const Interval Interval::universe = Interval(-std::numeric_limits<double>::infinity(), +std::numeric_limits<double>::infinity());
 

@@ -1,9 +1,9 @@
 #include <Application.hpp>
-
+#include <Color.hpp>
 
 namespace 
 {
-    void* pixel; //Window pixel data
+    void* pixels; //Window pixel data
     int pitch; // current position at pixel + y * pitch
 
     bool render_requested = false;
@@ -94,29 +94,24 @@ void Application::Update(Hittable_List& world)
         if (render_requested)
         {
 
-            //pointer to the pixel info of the image
-            void* pixels;
-
-            //pitch is the size of the image in bytes
-            int pitch;
-
+           
             //lock the screen for rendering
             SDL_LockTexture(render_image, NULL, &pixels, &pitch);
 
             for (int y = 0; y < image_h; y++) {
                 Uint32* row = (Uint32*)((Uint8*)pixels + y * pitch);
                 for (int x = 0; x < image_w; x++) {
-
+                    
+                        color pixel_color(0, 0, 0);
                     //The screen gets rendered from top left to bottom right using this
-                    auto pixel_center = upper_left_pixel_loc + (x * pixel_delta_x) + (y * pixel_delta_y);
+                    for (int sample = 0; sample < sample_per_pixel; sample++)
+                    {
+                        Ray r = GetRayAt(x, y);
+                        pixel_color += RaySceneColor(r, world);
+                    }
 
-                    auto ray_dir = pixel_center - camera_center;
 
-                    Ray ray(camera_center, ray_dir);
-
-                    auto pixel_color = RaySceneColor(ray, world);
-
-                    row[x] = WriteColor(pixel_color);
+                    row[x] = WriteColor(pixel_color_scale * pixel_color);
                 }
             }
         }
@@ -134,6 +129,9 @@ void Application::Update(Hittable_List& world)
 
 void Application::InitData()
 {
+
+    pixel_color_scale = 1.0 / sample_per_pixel;
+
     //View port aspect ratio
     auto aspect_ratio = 16.0 / 9.0;
 
@@ -168,7 +166,7 @@ void Application::InitData()
     //The vector axis for x and y pixels
     auto pixel_detla = (pixel_delta_x + pixel_delta_y);
 
-    upper_left_pixel_loc = upper_left_viewport_pos + 0.5 * pixel_detla;
+    pixel00_loc = upper_left_viewport_pos + 0.5 * pixel_detla;
 }
 
 void Application::CleanUp()
@@ -197,4 +195,15 @@ color Application::RaySceneColor(const Ray& r, const Hittable& world) const
     auto a = 0.5 * (unit_dir.y() + 1.0);
     //Just a lerp
     return (1-a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
+}
+
+Ray Application::GetRayAt(int x, int y)
+{
+    auto offset = sample_pixel_square();
+    auto pixel_sample = pixel00_loc + ((x + offset.x()) * pixel_delta_x) + ((y + offset.y()) * pixel_delta_y);
+
+    auto ray_origin = camera_center;
+    auto ray_dir = pixel_sample - ray_origin;
+
+    return Ray(ray_origin, ray_dir);
 }

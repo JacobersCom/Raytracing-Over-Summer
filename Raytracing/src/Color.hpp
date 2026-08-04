@@ -1,6 +1,6 @@
 #pragma once
+#include <Interval.hpp>
 #include <Vec3.hpp>
-
 
 using color = Vec3;
 
@@ -20,9 +20,10 @@ inline uint32_t WriteColor(const color& pixel_color)
 	auto b = pixel_color.z();
 
 	//Translate RGB values from [0-1] to [0-255]
-	auto ir = (int)(255.999 * r);
-	auto ig = (int)(255.999 * g);
-	auto ib = (int)(255.999 * b);
+	static const Interval color_intensity(0.000, 0.999);
+	auto ir = int(256 * color_intensity.clamp(r));
+	auto ig = int(256 * color_intensity.clamp(g));
+	auto ib = int(256 * color_intensity.clamp(b));
 
 	
 	return ((ir << 24) | (ig << 16) | (ib << 8) | 0xFF);

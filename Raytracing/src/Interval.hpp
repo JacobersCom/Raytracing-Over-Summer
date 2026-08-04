@@ -1,13 +1,13 @@
 #pragma once
 
-#include <Util.hpp>
+#include <limits>
 
 class Interval
 {
 public:
 	double min, max;
 
-	Interval() : min(+infinity), max(-infinity) {};
+	Interval() : min(std::numeric_limits<double>::infinity()), max(-std::numeric_limits<double>::infinity()) {};
 
 	Interval(double _min, double _max) : min(_min), max(_max) {};
 
@@ -24,6 +24,13 @@ public:
 	bool Surround(double x) const
 	{
 		return min < x && x < max;
+	}
+
+	double clamp(double x) const 
+	{
+		if (x < min) return min;
+		if (x > max) return max;
+		return x;
 	}
 
 	static const Interval empty, universe;

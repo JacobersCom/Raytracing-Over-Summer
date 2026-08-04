@@ -22,6 +22,7 @@ public:
 
 	double aspect_ratio = 1.0;  // Ratio of image width over height
 	int    image_w = 100;  // Rendered image width in pixel count
+	int sample_per_pixel = 10; //count of random sample for each pixel
 
 
 private:
@@ -30,12 +31,21 @@ private:
 	void CleanUp();
 	color RaySceneColor(const Ray& r, const Hittable& world) const;
 
+	//@brief Create a ray from the origin directed at a randomly sampled point around the pixel location of x, y
+	Ray GetRayAt(int x, int y);
+
+	inline Vec3 sample_pixel_square() const 
+	{
+		//Returns a random vec3 within the range of -0.5, +0.5
+		return Vec3(random_double() - 0.5, random_double() - 0.5, 0);
+	}
+
 private:
 
 	int    image_h;   // Rendered image height
-	
+	double pixel_color_scale;  // Color scale factor for a sum of pixel samples
 	point3 camera_center;         // Camera center
-	point3 upper_left_pixel_loc;    // Location of pixel 0, 0
+	point3 pixel00_loc;    // Location of pixel 0, 0
 	Vec3   pixel_delta_x;  // Offset to pixel to the right
 	Vec3   pixel_delta_y;  // Offset to pixel below
 
