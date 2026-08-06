@@ -51,6 +51,16 @@ public:
 	{
 		return (vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
 	}
+
+	static Vec3 random()
+	{
+		return Vec3(random_double(), random_double(), random_double());
+	}
+	
+	static Vec3 random(double min, double max)
+	{
+		return Vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+	}
 };
 
 //Just a alias
@@ -108,3 +118,4 @@ inline Vec3 cross(const Vec3& v, const Vec3& u)
 inline Vec3 unit_vector(const Vec3& v) {
 	return v / v.magnitude();
 }
+
