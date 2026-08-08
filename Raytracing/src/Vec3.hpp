@@ -119,3 +119,35 @@ inline Vec3 unit_vector(const Vec3& v) {
 	return v / v.magnitude();
 }
 
+inline Vec3 random_unit()
+{
+	while (true)
+	{
+		//Create a random vec between -1 and 1
+		Vec3 random_vec = Vec3::random(-1, 1);
+		//Extent the vector
+		double random_vec_sqrt = random_vec.length_sqrt();
+		//If the vector is inside or on the surface of the sphere
+		//1e-160 is to ensure the we dont get a bad vector(A vector close to the center of the sphere)
+		if (1e-160 < random_vec_sqrt && random_vec_sqrt <= 1.0f)
+		{
+			//Return a normalized vector
+			return random_vec / sqrt(random_vec_sqrt);
+		}
+	}
+}
+
+inline Vec3 random_vec_on_sphere(const Vec3& normal)
+{
+	Vec3 random_vec = random_unit();
+	//If the dot product between the random unit vector and the surface normal
+	//is greater than one return the unit vector
+	if (dot(random_vec, normal) > 0.0f)
+	{
+		return random_vec;
+	}
+
+	//Else invert the vector to point it in the same direction as the surface normal
+	return -random_vec;
+}
+

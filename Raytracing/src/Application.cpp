@@ -220,11 +220,10 @@ color Application::RaySceneColor(const Ray& r, const Hittable& world) const
     hit_record rec;
     if (world.hit(r, Interval(0, infinity), rec))
     {
-
-        //Returns a normalized shader between 0-1 when it was original -1 -1
-        return 0.5 * (rec.normal + color(1, 1, 1));
+		Vec3 direction = random_vec_on_sphere(rec.normal);
+        //Create a new ray pointing in the direction of the surface normals
+        return 0.5 * RaySceneColor(Ray(rec.hit_point, direction), world);
     }
-
 
     //background
     Vec3 unit_dir = unit_vector(r.GetDirection());

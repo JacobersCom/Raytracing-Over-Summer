@@ -38,7 +38,6 @@ public:
 		//T is where the ray hit the shpere
 		rec.t = root;
 		rec.hit_point = r.ray_at(rec.t);
-		//May need to change this, but for now I wont
 		Vec3 outward_normal = (rec.hit_point - center) / radius;
 		rec.SetFaceNormal(r, outward_normal);
 

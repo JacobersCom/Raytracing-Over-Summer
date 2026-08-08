@@ -25,15 +25,16 @@ inline double random_double(double min, double max)
     return min + (max - min) * random_double();
 }
 
+
 inline double degrees_to_radians(double degrees) {
     return degrees * pi / 180.0;
 }
-
-
 
 // Common Headers
 
 #include "Color.hpp"
 #include "Ray.hpp"
-#include "Vec3.hpp"
 #include "Interval.hpp"
+#include "Vec3.hpp"
+
+
