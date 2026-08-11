@@ -136,16 +136,16 @@ void Application::Update(Hittable_List& world)
                 Uint32* row = (Uint32*)((Uint8*)pixels + y * pitch);
                 for (int x = 0; x < image_w; x++) {
 
-                    color pixel_color(0, 0, 0);
+                    color PixelColor(0, 0, 0);
                     //The screen gets rendered from top left to bottom right using this
                     for (int sample = 0; sample < sample_per_pixel; sample++)
                     {
                         Ray r = GetRayAt(x, y);
-                        pixel_color += RaySceneColor(r, world);
+                        PixelColor += RaySceneColor(r, depth, world);
                     }
 
 
-                    row[x] = WriteColor(pixel_color_scale * pixel_color);
+                    row[x] = WriteColor(pixel_color_scale * PixelColor);
                 }
             }
             render_requested = false;
@@ -214,15 +214,20 @@ void Application::CleanUp()
     SDL_Quit();
 }
 
-color Application::RaySceneColor(const Ray& r, const Hittable& world) const
+color Application::RaySceneColor(const Ray& r, int depth, const Hittable& world) const
 {
     //objects
     hit_record rec;
-    if (world.hit(r, Interval(0, infinity), rec))
+    //Ignores hits close to the intersecting point. 
+    if (world.hit(r, Interval(0.001, infinity), rec))
     {
+        //We hit our limit. Stop grathering light
+        if (depth <= 0)
+            return color{ 0,0,0 };
+
 		Vec3 direction = random_vec_on_sphere(rec.normal);
         //Create a new ray pointing in the direction of the surface normals
-        return 0.5 * RaySceneColor(Ray(rec.hit_point, direction), world);
+        return 0.50 * RaySceneColor(Ray(rec.hit_point, direction), depth-1, world);
     }
 
     //background

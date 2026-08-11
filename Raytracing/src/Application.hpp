@@ -23,13 +23,14 @@ public:
 	double aspect_ratio = 1.0;  // Ratio of image width over height
 	int    image_w = 100;  // Rendered image width in pixel count
 	int sample_per_pixel = 10; //count of random sample for each pixel
+	int depth = 10; //Limits how many timesRayColor Runs
 
 
 private:
 
 	void InitData();
 	void CleanUp();
-	color RaySceneColor(const Ray& r, const Hittable& world) const;
+	color RaySceneColor(const Ray& r, int depth, const Hittable& world) const;
 
 	//@brief Create a ray from the origin directed at a randomly sampled point around the pixel location of x, y
 	Ray GetRayAt(int x, int y);
