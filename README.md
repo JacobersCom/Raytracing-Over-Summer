@@ -18,3 +18,6 @@ This was also my first time using vkpkg with cmake.
 
 #### Sphere with diffuse mat
 ![Sphere with diffuse mat](./progress_photos/Diffuse_mat.png)
+
+#### Fixed shadow acne of diffuse mat
+![Fixed shadow acne of diffuse mat](./progress_photos/fixed shadow acne.png)
