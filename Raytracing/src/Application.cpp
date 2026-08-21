@@ -141,7 +141,7 @@ void Application::Update(Hittable_List& world)
                     for (int sample = 0; sample < sample_per_pixel; sample++)
                     {
                         Ray r = GetRayAt(x, y);
-                        pixel_color += RaySceneColor(r, world);
+                        pixel_color += RaySceneColor(r, max_depth,world);
                     }
 
 
@@ -214,15 +214,18 @@ void Application::CleanUp()
     SDL_Quit();
 }
 
-color Application::RaySceneColor(const Ray& r, const Hittable& world) const
+color Application::RaySceneColor(const Ray& r, int depth, const Hittable& world) const
 {
+    if (depth <= 0)
+        return color(0, 0, 0);
+
     //objects
     hit_record rec;
-    if (world.hit(r, Interval(0, infinity), rec))
+    if (world.hit(r, Interval(0.001, infinity), rec))
     {
 		Vec3 direction = random_vec_on_sphere(rec.normal);
         //Create a new ray pointing in the direction of the surface normals
-        return 0.5 * RaySceneColor(Ray(rec.hit_point, direction), world);
+        return 0.5 * RaySceneColor(Ray(rec.hit_point, direction),depth - 1, world);
     }
 
     //background
