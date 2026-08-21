@@ -17,4 +17,4 @@ This was also my first time using vkpkg with cmake.
 ![Sphere with ground render](./progress_photos/ground_and_sphere.png)
 
 #### Sphere with diffuse mat
-[[Sphere with diffuse mat](./progress_photos/Diffuse_mat.png)
+![Sphere with diffuse mat](./progress_photos/Diffuse_mat.png)
